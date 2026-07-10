@@ -1,0 +1,21 @@
+{
+  "name": "cybernexus-x",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CYBERNEXUS X — portfolio-grade Security Operations Center (SOC) platform",
+  "workspaces": [
+    "shared",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "build:shared": "npm run build -w shared",
+    "dev:server": "npm run dev -w server",
+    "dev:client": "npm run dev -w client",
+    "dev": "npm run build:shared && concurrently -n server,client -c blue,green \"npm run dev:server\" \"npm run dev:client\"",
+    "build": "npm run build -w shared && npm run build -w server && npm run build -w client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
