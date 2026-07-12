@@ -83,9 +83,42 @@ Verify (offline, in-memory DB): `cd server && npx tsx src/modules/vulnerability/
   keyword (product/version) rather than precise CPE matching; risk score is a
   documented heuristic, not an industry-standard model (e.g. EPSS).
 
-### ⬜ Modules 3–8
-Not started. Next up: **Module 3 — AI Threat Detection** (log ingest, statistical
-anomaly detection, signature IDS rules → ThreatEvents).
+### ✅ Module 3 — AI Threat Detection
+Full vertical slice: parse logs → run detectors → link target assets → persist
+ThreatEvents.
+
+- **Log parser** for Apache/Nginx **common & combined** access-log formats
+  (real CLF date parsing with timezone offset) plus structured JSON entries;
+  unparseable lines are counted as skipped, never fabricated.
+- **Statistical detectors:** request-rate anomaly via **leave-one-out z-score**
+  over time windows; **port-scan** detection (distinct ports from one source
+  within a sliding window).
+- **Signature detectors:** **brute-force** (repeated failed logins from one IP)
+  and **SYN-flood** (burst of bare-SYN packets) via sliding-window counting.
+- **Tunable thresholds** (z-score, window sizes, counts) overridable per request.
+- **Synthetic sample-log generator** (deterministic PRNG) with optionally-embedded
+  attacks — synthetic *input* you control, not fabricated threat output.
+- Detections persist as `ThreatEvent`s with evidence + 0–100 score, and link to an
+  `Asset` when the target IP matches.
+
+Endpoints (all require auth):
+- `POST /api/threats/ingest` (raw logs or JSON) · `POST /api/threats/ingest/sample`
+- `GET /api/threats` (filter by category/severity/acknowledged) · `GET /api/threats/stats`
+- `PATCH /api/threats/:id/acknowledge`
+
+Verify (offline, in-memory DB): `cd server && npx tsx src/modules/threat/threat.smoke.ts` → 22/22 checks.
+
+**What's real vs. architecturally simplified (Module 3):**
+- *Real:* log parsing, z-score/sliding-window math, all four detectors, persistence,
+  asset linking, tunable thresholds.
+- *Simplified:* batch analysis of ingested logs (not a live streaming pipeline);
+  SYN-flood relies on a TCP-flags field in the input rather than raw packet capture;
+  detection is threshold/heuristic-based, not an ML-trained model ("AI" = statistical
+  anomaly detection).
+
+### ⬜ Modules 4–8
+Not started. Next up: **Module 4 — Threat Intelligence Center** (AbuseIPDB +
+VirusTotal reputation lookups, MongoDB cache).
 
 ## Legal / safety scope
 All network scanning defaults to **localhost / private ranges only**

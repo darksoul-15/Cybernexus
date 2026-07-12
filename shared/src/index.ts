@@ -206,3 +206,43 @@ export interface AuthResponse {
   user: User;
   tokens: AuthTokens;
 }
+
+// ── Module 3: AI Threat Detection ───────────────────────────────────────────
+// Normalized log entry — the unit of input to the detection engine. Produced
+// by parsing access logs (combined/common format) or supplied as JSON.
+export interface LogEntry {
+  timestamp: ISODate;
+  sourceIp: string;
+  destIp?: string;
+  destPort?: number;
+  method?: string;
+  path?: string;
+  statusCode?: number;
+  bytes?: number;
+  protocol?: 'tcp' | 'udp';
+  flags?: string; // TCP flags, e.g. "S" for a bare SYN
+}
+
+export type LogFormat = 'combined' | 'common' | 'json';
+
+// Tunable detection thresholds (all have server-side defaults).
+export interface ThreatDetectionConfig {
+  rateWindowSec: number; // bucket size for rate anomaly
+  rateZThreshold: number; // z-score to flag a rate spike
+  rateMinCount: number; // floor so tiny buckets don't trip
+  portScanWindowSec: number; // sliding window for distinct-port counting
+  portScanDistinctPorts: number; // distinct ports from one IP to flag a scan
+  bruteForceWindowSec: number; // sliding window for failed logins
+  bruteForceAttempts: number; // failed logins from one IP to flag brute-force
+  synFloodWindowSec: number; // sliding window for SYN counting
+  synFloodCount: number; // SYNs from one IP to flag a flood
+}
+
+// Summary returned by an ingest+detect run.
+export interface IngestSummary {
+  entriesParsed: number;
+  entriesSkipped: number;
+  threatsDetected: number;
+  byCategory: Partial<Record<ThreatCategory, number>>;
+  threats: ThreatEvent[];
+}
