@@ -29,6 +29,17 @@ Socket.io · JWT auth.
    ```
 4. Health check: `GET http://localhost:4000/api/health`
 
+## Run the whole stack with zero setup (no Atlas needed)
+Boots the API against an in-memory MongoDB, plus the React client:
+```bash
+npm install && npm run build:shared
+cd server && npm run dev:memory     # API + Socket.io on :4000 (in-memory Mongo)
+cd client && npm run dev            # dashboard on http://localhost:5173
+```
+Open http://localhost:5173, register an admin, then click "Ingest sample logs"
+to watch threats stream onto the dashboard live. (Data is discarded on exit —
+use a real `MONGODB_URI` via `npm run dev:server` to persist.)
+
 ## Verify the auth slice (no Atlas needed)
 Runs the API against an in-memory MongoDB and exercises register → login → /me:
 ```bash
@@ -148,9 +159,38 @@ Verify (offline, in-memory DB): `cd server && npx tsx src/modules/intel/intel.sm
   documented weighting of engine hits, not VT's own proprietary score; domain
   reputation uses VirusTotal only (AbuseIPDB is IP-only).
 
-### ⬜ Modules 5–8
-Not started. Next up: **Module 5 — SOC Dashboard** (live Socket.io dashboard,
-Recharts, risk heat map + incident timeline).
+### ✅ Module 5 — SOC Dashboard
+Live React dashboard over the whole backend, with real-time Socket.io updates.
+
+- **React + TypeScript client** (Vite) in `/client` — the first UI in the project.
+- **Auth flow**: register/login, JWT persisted in localStorage, guarded routes,
+  `GET /api/auth/me` session restore.
+- **Dashboard aggregation** endpoint `GET /api/dashboard/summary` built entirely
+  from Mongo aggregations (no fabricated numbers).
+- **Recharts** visualizations: threats-by-category bar, severity-distribution
+  pie, plus a custom asset risk heat map.
+- **Live updates via Socket.io**: the server emits `threat:new` / `scan:completed`
+  / `dashboard:update` from the threat, vulnerability and intel services; the
+  dashboard live-appends to a threat feed and debounce-refetches the summary.
+  Socket connections require a valid JWT in the handshake.
+- Verified end-to-end in a real browser: register → live dashboard → "Ingest
+  sample logs" → 4 threats pushed live → charts populate → acknowledge decrements
+  the unacknowledged counter.
+
+Endpoints: `GET /api/dashboard/summary` (auth). Socket namespace `/` (JWT handshake).
+
+Verify (server aggregation, offline): `cd server && npx tsx src/modules/dashboard/dashboard.smoke.ts` → 9/9 checks.
+
+**What's real vs. architecturally simplified (Module 5):**
+- *Real:* live Socket.io push, JWT-authenticated sockets, Mongo-aggregated
+  summary, Recharts over real data, full auth flow.
+- *Simplified:* dashboard broadcasts to all connected clients (no per-user rooms
+  / RBAC on socket channels); the client bundle isn't code-split (Recharts makes
+  it ~600 kB) — fine for a portfolio, noted for honesty.
+
+### ⬜ Modules 6–8
+Not started. Next up: **Module 6 — Automated Incident Response** (auto-generate
+incident tickets from ThreatEvents, alerting, gated IP blocking).
 
 ## Legal / safety scope
 All network scanning defaults to **localhost / private ranges only**

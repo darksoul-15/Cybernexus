@@ -11,6 +11,7 @@ import { checkIp as abuseCheckIp, normalizeAbuse } from './abuseipdb.service.js'
 import { checkIndicator as vtCheck } from './virustotal.service.js';
 import { classifyIndicator } from './indicator.util.js';
 import { ThreatEventModel } from '../../models/ThreatEvent.js';
+import { emitThreats } from '../../realtime/bus.js';
 import { HttpError } from '../../middleware/error.js';
 import type {
   IndicatorReputation,
@@ -121,7 +122,7 @@ export async function enrichThreatSources(limit = 25): Promise<{ checked: number
     const already = await ThreatEventModel.findOne({ category: 'reputation', sourceIp: ip });
     if (already) continue;
 
-    await ThreatEventModel.create({
+    const doc = await ThreatEventModel.create({
       category: 'reputation',
       severity: rep.score >= 75 ? 'high' : 'medium',
       sourceIp: ip,
@@ -132,6 +133,7 @@ export async function enrichThreatSources(limit = 25): Promise<{ checked: number
       acknowledged: false,
       detectedAt: new Date(),
     });
+    emitThreats([doc.toJSON()]);
     raised++;
   }
 

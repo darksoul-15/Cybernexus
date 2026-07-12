@@ -6,6 +6,7 @@ import { ThreatEventModel } from '../../models/ThreatEvent.js';
 import { AssetModel } from '../../models/Asset.js';
 import { parseLogs } from './logParser.service.js';
 import { runDetectors, type Detection } from './detection.service.js';
+import { emitThreats } from '../../realtime/bus.js';
 import type {
   IngestSummary,
   LogFormat,
@@ -50,6 +51,7 @@ export async function ingestAndDetect(input: IngestInput): Promise<IngestSummary
   }));
 
   const created = docs.length ? await ThreatEventModel.insertMany(docs) : [];
+  if (created.length) emitThreats(created.map((c) => c.toJSON()));
 
   const byCategory: Partial<Record<ThreatCategory, number>> = {};
   for (const d of detections) byCategory[d.category] = (byCategory[d.category] ?? 0) + 1;

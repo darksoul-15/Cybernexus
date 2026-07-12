@@ -6,6 +6,7 @@ import assetRoutes from './modules/asset/asset.routes.js';
 import vulnRoutes from './modules/vulnerability/vulnerability.routes.js';
 import threatRoutes from './modules/threat/threat.routes.js';
 import intelRoutes from './modules/intel/intel.routes.js';
+import dashboardRoutes from './modules/dashboard/dashboard.routes.js';
 import { notFound, errorHandler } from './middleware/error.js';
 
 export function createApp(): Express {
@@ -23,6 +24,7 @@ export function createApp(): Express {
   app.use('/api/assets', assetRoutes);
   app.use('/api/threats', threatRoutes);
   app.use('/api/intel', intelRoutes);
+  app.use('/api/dashboard', dashboardRoutes);
   app.use('/api', vulnRoutes);
 
   app.use(notFound);

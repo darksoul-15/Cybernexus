@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "dev:memory": "tsx src/devMemory.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js"
   },

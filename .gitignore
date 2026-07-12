@@ -9,3 +9,8 @@ coverage/
 client/dist/
 server/dist/
 shared/dist/
+
+# TS build artifacts
+*.tsbuildinfo
+client/vite.config.js
+client/vite.config.d.ts

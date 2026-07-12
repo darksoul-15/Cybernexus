@@ -272,3 +272,60 @@ export interface IndicatorReputation {
   sources: ProviderReputation[];
   checkedAt: ISODate;
 }
+
+// ── Module 5: SOC Dashboard ─────────────────────────────────────────────────
+export interface CountBucket {
+  key: string;
+  count: number;
+}
+
+export interface AssetRiskEntry {
+  _id: ID;
+  name: string;
+  ipAddress: string;
+  riskScore: number;
+  band: Severity;
+}
+
+export interface DashboardSummary {
+  assets: {
+    total: number;
+    scannable: number;
+    heatmap: AssetRiskEntry[]; // sorted by riskScore desc
+  };
+  vulnerabilities: {
+    total: number;
+    open: number;
+    bySeverity: CountBucket[];
+  };
+  threats: {
+    total: number;
+    unacknowledged: number;
+    byCategory: CountBucket[];
+    bySeverity: CountBucket[];
+    recent: ThreatEvent[];
+  };
+  incidents: {
+    total: number;
+    byStatus: CountBucket[];
+  };
+  generatedAt: ISODate;
+}
+
+// Socket.io event channel names + payloads (shared client/server contract).
+export const SOCKET_EVENTS = {
+  threatNew: 'threat:new',
+  scanCompleted: 'scan:completed',
+  incidentNew: 'incident:new',
+  dashboardUpdate: 'dashboard:update',
+} as const;
+
+export interface ThreatNewPayload {
+  threats: ThreatEvent[];
+}
+export interface ScanCompletedPayload {
+  assetId: ID;
+  openPorts: number;
+  vulnerabilitiesFound: number;
+  riskScore: number;
+}
