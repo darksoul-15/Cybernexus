@@ -54,9 +54,38 @@ cd server && npx tsx src/smoke.ts
 - *Simplified:* access-token-only auth (no refresh-token rotation yet) — adequate for
   a portfolio SOC; documented rather than hidden.
 
-### ⬜ Modules 2–8
-Not started. Next up: **Module 2 — Vulnerability Assessment Engine** (TCP port
-scanner → banner enum → CVSS v3.1 → NVD match → per-asset risk score).
+### ✅ Module 2 — Vulnerability Assessment Engine
+Full vertical slice: authorize target → TCP scan → banner enum → NVD CVE
+enrichment (real CVSS v3.1) → persist vulnerabilities → per-asset risk score.
+
+- **Real TCP connect scanner** (`net` sockets), bounded concurrency, per-port
+  timeout, configurable range. Banner/service enumeration on open ports.
+- **Real CVSS v3.1 Base Score calculator** — implements the FIRST.org formula
+  (ISS/Impact/Exploitability/Roundup), not a lookup table. Verified against
+  official test vectors (9.8, 10.0, 7.5, 5.5, 0.0).
+- **NVD CVE matching** against the live NVD 2.0 API by product/version, cached in
+  MongoDB (7-day TTL) to respect the free-tier rate limit.
+- **Per-asset risk score** (0–100) via a documented cumulative heuristic.
+- **Scope guard**: every scan target is CIDR-checked against
+  `AUTHORIZED_SCAN_RANGES`; assets outside allowed ranges can't be marked scannable.
+
+Endpoints (all require auth):
+- `POST /api/assets` · `GET /api/assets` · `GET /api/assets/:id` · `DELETE /api/assets/:id` (admin)
+- `POST /api/assets/:assetId/scan` · `GET /api/assets/:assetId/scans`
+- `GET /api/vulnerabilities?assetId=` · `POST /api/cvss/score`
+
+Verify (offline, in-memory DB): `cd server && npx tsx src/modules/vulnerability/vuln.smoke.ts` → 32/32 checks.
+
+**What's real vs. architecturally simplified (Module 2):**
+- *Real:* TCP scanning + banner grab, the full CVSS v3.1 math, live NVD lookups,
+  Mongo caching, scope enforcement, risk aggregation.
+- *Simplified:* TCP-connect scan only (no SYN/stealth or UDP); NVD matching is
+  keyword (product/version) rather than precise CPE matching; risk score is a
+  documented heuristic, not an industry-standard model (e.g. EPSS).
+
+### ⬜ Modules 3–8
+Not started. Next up: **Module 3 — AI Threat Detection** (log ingest, statistical
+anomaly detection, signature IDS rules → ThreatEvents).
 
 ## Legal / safety scope
 All network scanning defaults to **localhost / private ranges only**

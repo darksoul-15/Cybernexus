@@ -2,6 +2,8 @@ import express, { type Express } from 'express';
 import cors from 'cors';
 import { env } from './config/env.js';
 import authRoutes from './modules/auth/auth.routes.js';
+import assetRoutes from './modules/asset/asset.routes.js';
+import vulnRoutes from './modules/vulnerability/vulnerability.routes.js';
 import { notFound, errorHandler } from './middleware/error.js';
 
 export function createApp(): Express {
@@ -16,6 +18,8 @@ export function createApp(): Express {
   });
 
   app.use('/api/auth', authRoutes);
+  app.use('/api/assets', assetRoutes);
+  app.use('/api', vulnRoutes);
 
   app.use(notFound);
   app.use(errorHandler);
