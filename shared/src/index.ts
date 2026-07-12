@@ -246,3 +246,29 @@ export interface IngestSummary {
   byCategory: Partial<Record<ThreatCategory, number>>;
   threats: ThreatEvent[];
 }
+
+// ── Module 4: Threat Intelligence Center ────────────────────────────────────
+export type IndicatorType = 'ip' | 'domain';
+export type ReputationVerdict = 'clean' | 'suspicious' | 'malicious' | 'unknown';
+export type IntelProvider = 'abuseipdb' | 'virustotal';
+
+// One provider's normalized opinion about an indicator.
+export interface ProviderReputation {
+  provider: IntelProvider;
+  available: boolean; // false when no API key or the request failed
+  verdict: ReputationVerdict;
+  score: number; // 0–100 maliciousness as judged by this provider
+  detail: Record<string, unknown>; // normalized fields (reports, engine hits, ...)
+  cached: boolean;
+  error?: string;
+}
+
+// Aggregated reputation across providers.
+export interface IndicatorReputation {
+  indicator: string;
+  type: IndicatorType;
+  verdict: ReputationVerdict; // worst verdict across available sources
+  score: number; // max provider score across available sources
+  sources: ProviderReputation[];
+  checkedAt: ISODate;
+}

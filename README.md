@@ -116,9 +116,41 @@ Verify (offline, in-memory DB): `cd server && npx tsx src/modules/threat/threat.
   detection is threshold/heuristic-based, not an ML-trained model ("AI" = statistical
   anomaly detection).
 
-### ⬜ Modules 4–8
-Not started. Next up: **Module 4 — Threat Intelligence Center** (AbuseIPDB +
-VirusTotal reputation lookups, MongoDB cache).
+### ✅ Module 4 — Threat Intelligence Center
+Reputation lookups for IPs/domains across two real free-tier providers, with a
+MongoDB cache and graceful degradation.
+
+- **AbuseIPDB** (v2 CHECK, IP-only) and **VirusTotal** (v3, IPs + domains) live
+  reputation lookups; each provider response normalized to a verdict + 0–100 score.
+- **Aggregation** across providers — worst verdict wins, max score wins.
+- **MongoDB cache** keyed by `provider:type:indicator` (24h TTL) to respect
+  free-tier rate limits (AbuseIPDB 1000/day, VirusTotal 4/min).
+- **Graceful degradation**: missing API key or failed request → the provider
+  reports `available:false` and the verdict is `unknown` — never fabricated.
+  Misses/errors are not cached, so results self-heal once keys are configured.
+- **Threat enrichment**: looks up recent `ThreatEvent` source IPs and raises a
+  `reputation` ThreatEvent when a source is judged malicious (deduped per IP).
+- Indicator validation rejects malformed IPs/domains (alphabetic-TLD rule stops
+  dotted-numeric strings from being mistaken for domains).
+
+Config: set `ABUSEIPDB_API_KEY` / `VIRUSTOTAL_API_KEY` in `.env` (both optional).
+
+Endpoints (all require auth):
+- `GET /api/intel/lookup/:indicator` (`?force=true` to bypass cache)
+- `POST /api/intel/enrich` (enrich recent threat source IPs)
+
+Verify (offline, in-memory DB): `cd server && npx tsx src/modules/intel/intel.smoke.ts` → 23/23 checks.
+
+**What's real vs. architecturally simplified (Module 4):**
+- *Real:* live AbuseIPDB + VirusTotal API integration, response normalization,
+  cross-provider aggregation, Mongo caching, indicator validation, threat enrichment.
+- *Simplified:* two providers (not a full intel fabric); VirusTotal score is a
+  documented weighting of engine hits, not VT's own proprietary score; domain
+  reputation uses VirusTotal only (AbuseIPDB is IP-only).
+
+### ⬜ Modules 5–8
+Not started. Next up: **Module 5 — SOC Dashboard** (live Socket.io dashboard,
+Recharts, risk heat map + incident timeline).
 
 ## Legal / safety scope
 All network scanning defaults to **localhost / private ranges only**

@@ -19,5 +19,9 @@ export const env = {
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean),
+  // Module 4 — Threat Intelligence free-tier API keys (optional; lookups degrade
+  // gracefully to "unknown" when a key is absent rather than fabricating data).
+  abuseipdbApiKey: process.env.ABUSEIPDB_API_KEY ?? '',
+  virustotalApiKey: process.env.VIRUSTOTAL_API_KEY ?? '',
   isProd: process.env.NODE_ENV === 'production',
 } as const;
