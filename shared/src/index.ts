@@ -375,3 +375,26 @@ export interface ChainVerificationResult {
   issues: ChainIssue[];
   verifiedAt: ISODate;
 }
+
+// ── Module 8: Compliance Module ─────────────────────────────────────────────
+export interface ComplianceReport {
+  generatedAt: ISODate;
+  generatedBy: { id: ID; email: string } | null;
+  period: { from?: ISODate; to?: ISODate };
+  audit: {
+    total: number;
+    uniqueActors: number;
+    byAction: CountBucket[];
+    recent: AuditLog[];
+  };
+  incidents: {
+    total: number;
+    byStatus: CountBucket[];
+    bySeverity: CountBucket[];
+  };
+  evidence: {
+    chainValid: boolean;
+    length: number;
+    headHash: string | null;
+  };
+}

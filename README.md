@@ -251,9 +251,44 @@ Verify (offline, in-memory DB): `cd server && npx tsx src/modules/evidence/evide
   MongoDB — **not** a distributed blockchain (no P2P network, consensus, proof of
   work, or Merkle trees). It delivers tamper-evidence, not decentralization.
 
-### ⬜ Module 8
-Not started. Last one: **Module 8 — Compliance Module** (audit-log middleware —
-already in use — plus a PDF compliance report generator).
+### ✅ Module 8 — Compliance Module
+Surfaces the audit trail and generates PDF compliance reports from real data.
+
+- **Audit-log middleware** (`audit()`), wired across every sensitive route since
+  Module 1 (auth, assets, scans, threats, intel, incidents, evidence, compliance),
+  writes immutable AuditLog records.
+- **Audit queries**: `GET /api/compliance/audit` (filter by actor/action/date
+  range, paginated) and `GET /api/compliance/audit/stats`.
+- **Compliance report**: assembled from AuditLog + Incident + live evidence-chain
+  verification — available as JSON or a generated **PDF** (pdfkit) with an
+  evidence-integrity attestation, audit summary, incident summary, and a recent-
+  events table.
+- Admin-only; report generation is itself audited.
+
+Endpoints (admin): `GET /api/compliance/audit`, `GET /api/compliance/audit/stats`,
+`GET /api/compliance/report`, `GET /api/compliance/report.pdf`.
+
+Verify (offline, in-memory DB): `cd server && npx tsx src/modules/compliance/compliance.smoke.ts` → 15/15 checks.
+
+**What's real vs. architecturally simplified (Module 8):**
+- *Real:* immutable audit trail, filtered queries, report aggregation from real
+  records, genuine PDF generation with the evidence-chain attestation.
+- *Simplified:* reports map to no specific framework's exact control set (e.g.
+  SOC 2 / ISO 27001) — it's a general security-operations compliance report.
+
+---
+
+## 🎉 All 8 modules complete
+Every module ships end-to-end (scan/detect/enrich → store → display → report) and
+is backed by an offline smoke test. Run them all:
+```bash
+cd server
+for m in smoke \
+  modules/vulnerability/vuln.smoke modules/threat/threat.smoke \
+  modules/intel/intel.smoke modules/dashboard/dashboard.smoke \
+  modules/incident/incident.smoke modules/evidence/evidence.smoke \
+  modules/compliance/compliance.smoke; do npx tsx src/$m.ts; done
+```
 
 ## Legal / safety scope
 All network scanning defaults to **localhost / private ranges only**
