@@ -360,3 +360,18 @@ export interface BlockedIpRecord {
   createdBy?: ID;
   createdAt: ISODate;
 }
+
+// ── Module 7: Blockchain Evidence Vault ─────────────────────────────────────
+export interface ChainIssue {
+  index: number;
+  recordId: ID;
+  problem: string;
+}
+
+export interface ChainVerificationResult {
+  valid: boolean;
+  length: number;
+  headHash: string | null; // hash of the latest record (chain head)
+  issues: ChainIssue[];
+  verifiedAt: ISODate;
+}

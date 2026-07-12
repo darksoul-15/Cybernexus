@@ -223,9 +223,37 @@ Verify (offline, in-memory DB): `cd server && npx tsx src/modules/incident/incid
   flags and never runs in this build — a documented safety decision, not a
   limitation; correlation is by source IP (no time-window/kill-chain grouping).
 
-### ⬜ Modules 7–8
-Not started. Next up: **Module 7 — Blockchain Evidence Vault** (SHA-256 hash-chain
-ledger, tamper verification, chain-of-custody).
+### ✅ Module 7 — Blockchain Evidence Vault
+A real SHA-256 hash-chain ledger with tamper detection and chain-of-custody.
+
+- **Hash-chain**: each `EvidenceRecord` stores a `contentHash` (SHA-256 of the
+  canonicalized payload) and a `hash` binding its index, contentHash, the
+  previous record's hash, timestamp and type. Genesis links to 64 zeros.
+- **Deterministic canonicalization** (recursively sorted keys) so the same
+  payload always hashes identically — the basis for reliable verification.
+- **Tamper detection** (`GET /api/evidence/verify`): re-walks the chain and
+  reports the exact index of any altered payload, forged hash, broken link, or
+  index gap. Editing a past record breaks that record *and* every link after it.
+- **Chain-of-custody**: every record carries a custody log; accessing and
+  exporting a record append `accessed`/`exported` entries (with who + when).
+- Append is two-step so the stored hash and stored timestamp stay consistent;
+  retries on a concurrent index collision (unique index on `index`).
+
+Endpoints (auth): `POST /api/evidence`, `GET /api/evidence`,
+`GET /api/evidence/verify`, `GET /api/evidence/:id`, `GET /api/evidence/:id/export`.
+
+Verify (offline, in-memory DB): `cd server && npx tsx src/modules/evidence/evidence.smoke.ts` → 24/24 checks.
+
+**What's real vs. architecturally simplified (Module 7):**
+- *Real:* SHA-256 hashing, canonicalization, the full chain-linking + tamper
+  verification, chain-of-custody logging.
+- *Simplified (documented, per project scope):* a single-writer hash-chain in
+  MongoDB — **not** a distributed blockchain (no P2P network, consensus, proof of
+  work, or Merkle trees). It delivers tamper-evidence, not decentralization.
+
+### ⬜ Module 8
+Not started. Last one: **Module 8 — Compliance Module** (audit-log middleware —
+already in use — plus a PDF compliance report generator).
 
 ## Legal / safety scope
 All network scanning defaults to **localhost / private ranges only**
