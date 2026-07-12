@@ -188,9 +188,44 @@ Verify (server aggregation, offline): `cd server && npx tsx src/modules/dashboar
   / RBAC on socket channels); the client bundle isn't code-split (Recharts makes
   it ~600 kB) — fine for a portfolio, noted for honesty.
 
-### ⬜ Modules 6–8
-Not started. Next up: **Module 6 — Automated Incident Response** (auto-generate
-incident tickets from ThreatEvents, alerting, gated IP blocking).
+### ✅ Module 6 — Automated Incident Response
+Full vertical slice: correlate ThreatEvents → generate Incidents → alert →
+(gated) containment.
+
+- **Auto-response engine** (`POST /api/incidents/auto-respond`): selects
+  unacknowledged, unlinked threats that are high/critical or score ≥
+  `AUTO_INCIDENT_MIN_SCORE`, correlates them by source IP into Incident tickets,
+  links the threats, and is idempotent (linked threats aren't re-processed).
+- **Alerting**: email via nodemailer when SMTP is configured, plus an always-on
+  in-app notification pushed over Socket.io. No SMTP → in-app only, no error.
+- **IP blocking — safe by default (project rule 7):** two independent opt-ins.
+  Blocks are **simulated/logged** unless `RESPONSE_LIVE_MODE=true`, and even then
+  no OS firewall command executes unless `RESPONSE_ALLOW_REAL_FIREWALL=true`
+  (off in this build). A `BlockedIp` ledger records every action with an
+  `enforced` flag; blocking is admin-only and audited.
+- Incident management: list/filter, get, status transitions (sets `resolvedAt`,
+  appends to the action timeline), all reflected on the dashboard.
+
+Endpoints (auth): `POST /api/incidents/auto-respond`, `GET /api/incidents`,
+`GET /api/incidents/:id`, `PATCH /api/incidents/:id`, `GET /api/incidents/blocklist`,
+`POST /api/incidents/block` (admin).
+
+Config: `AUTO_INCIDENT_MIN_SCORE`, `RESPONSE_LIVE_MODE`,
+`RESPONSE_ALLOW_REAL_FIREWALL`, `SMTP_*` / `ALERT_*`.
+
+Verify (offline, in-memory DB): `cd server && npx tsx src/modules/incident/incident.smoke.ts` → 18/18 checks.
+
+**What's real vs. architecturally simplified (Module 6):**
+- *Real:* threat correlation, incident lifecycle, nodemailer email, live Socket.io
+  alerts, the blocked-IP ledger, RBAC + audit on containment, and the actual
+  `netsh`/`iptables` command construction.
+- *Simplified / deliberately gated:* real firewall execution is OFF behind two
+  flags and never runs in this build — a documented safety decision, not a
+  limitation; correlation is by source IP (no time-window/kill-chain grouping).
+
+### ⬜ Modules 7–8
+Not started. Next up: **Module 7 — Blockchain Evidence Vault** (SHA-256 hash-chain
+ledger, tamper verification, chain-of-custody).
 
 ## Legal / safety scope
 All network scanning defaults to **localhost / private ranges only**

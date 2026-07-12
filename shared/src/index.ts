@@ -329,3 +329,34 @@ export interface ScanCompletedPayload {
   vulnerabilitiesFound: number;
   riskScore: number;
 }
+
+// ── Module 6: Automated Incident Response ───────────────────────────────────
+export type BlockMode = 'simulated' | 'live';
+
+export interface BlockResult {
+  ip: string;
+  mode: BlockMode;
+  enforced: boolean; // true only if a real firewall rule was actually applied
+  message: string;
+}
+
+export interface AutoRespondResult {
+  qualifyingThreats: number;
+  incidentsCreated: number;
+  incidents: Incident[];
+  alertsSent: number;
+  blocks: BlockResult[];
+}
+
+// A blocked-IP ledger entry (containment record; simulated unless live mode).
+export interface BlockedIpRecord {
+  _id: ID;
+  ip: string;
+  mode: BlockMode;
+  enforced: boolean;
+  reason: string;
+  incident?: ID;
+  active: boolean;
+  createdBy?: ID;
+  createdAt: ISODate;
+}

@@ -23,5 +23,21 @@ export const env = {
   // gracefully to "unknown" when a key is absent rather than fabricating data).
   abuseipdbApiKey: process.env.ABUSEIPDB_API_KEY ?? '',
   virustotalApiKey: process.env.VIRUSTOTAL_API_KEY ?? '',
+  // Module 6 — Automated Incident Response.
+  // Threats at/above this score auto-generate an incident.
+  autoIncidentMinScore: Number(process.env.AUTO_INCIDENT_MIN_SCORE ?? 70),
+  // Live mode records a 'live' block action instead of a simulated one.
+  responseLiveMode: process.env.RESPONSE_LIVE_MODE === 'true',
+  // Second, separate opt-in required to actually execute an OS firewall command.
+  // Kept off by default so no disruptive action runs without explicit intent.
+  responseAllowRealFirewall: process.env.RESPONSE_ALLOW_REAL_FIREWALL === 'true',
+  smtp: {
+    host: process.env.SMTP_HOST ?? '',
+    port: Number(process.env.SMTP_PORT ?? 587),
+    user: process.env.SMTP_USER ?? '',
+    pass: process.env.SMTP_PASS ?? '',
+    from: process.env.ALERT_FROM ?? 'cybernexus-x@localhost',
+    to: process.env.ALERT_TO ?? '',
+  },
   isProd: process.env.NODE_ENV === 'production',
 } as const;
