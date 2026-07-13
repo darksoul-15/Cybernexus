@@ -10,7 +10,7 @@ Socket.io · JWT auth.
 ```
 /shared   shared TypeScript domain types (single source of truth)
 /server   Node/Express + TS API
-/client   React + TS (Vite)   ← scaffolded in a later step
+/client   React + TS (Vite): Dashboard, Evidence Vault, Compliance
 ```
 
 ## Setup
@@ -250,6 +250,15 @@ Verify (offline, in-memory DB): `cd server && npx tsx src/modules/evidence/evide
 - *Simplified (documented, per project scope):* a single-writer hash-chain in
   MongoDB — **not** a distributed blockchain (no P2P network, consensus, proof of
   work, or Merkle trees). It delivers tamper-evidence, not decentralization.
+
+### Client UI coverage
+The React client (`/client`) has three authenticated views, all sharing a top nav:
+- **Dashboard** — live stats, Recharts, risk heat map, live threat feed (Modules 1–6).
+- **Evidence Vault** — chain-integrity attestation, append records, browse the
+  ledger, and inspect any record's payload + chain-of-custody (Module 7).
+- **Compliance** *(admin-only)* — audit-trail table, actions-by-type + incident
+  posture, and one-click **PDF report download** (Module 8). The nav link is
+  hidden and the route guarded for non-admin users.
 
 ### ✅ Module 8 — Compliance Module
 Surfaces the audit trail and generates PDF compliance reports from real data.

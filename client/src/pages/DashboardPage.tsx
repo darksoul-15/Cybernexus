@@ -4,10 +4,10 @@ import {
 } from 'recharts';
 import type { DashboardSummary, ThreatEvent, ThreatNewPayload } from '@cybernexus/shared';
 import { SOCKET_EVENTS } from '@cybernexus/shared';
-import { useAuth } from '../auth';
 import { api } from '../api';
 import { getSocket, disconnectSocket } from '../socket';
 import { StatCard } from '../components/StatCard';
+import { TopNav } from '../components/TopNav';
 
 const SEV_COLORS: Record<string, string> = {
   critical: '#ff3b6b', high: '#ff8a3d', medium: '#ffd23d', low: '#3dd6ff', info: '#8a94a6',
@@ -15,7 +15,6 @@ const SEV_COLORS: Record<string, string> = {
 const CAT_COLOR = '#00e0c6';
 
 export function DashboardPage() {
-  const { user, logout } = useAuth();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [liveFeed, setLiveFeed] = useState<ThreatEvent[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -86,21 +85,14 @@ export function DashboardPage() {
 
   return (
     <div className="app-shell">
-      <header className="topbar">
-        <div className="brand small">
-          CYBERNEXUS<span className="brand-x">X</span>
-        </div>
-        <div className="topbar-right">
-          <span className={connected ? 'pill live' : 'pill'}>
-            <span className="dot" /> {connected ? 'LIVE' : 'offline'}
-          </span>
-          <button className="btn" onClick={runSample} disabled={busy}>
-            {busy ? 'Ingesting…' : 'Ingest sample logs'}
-          </button>
-          <span className="muted">{user?.email} · {user?.role}</span>
-          <button className="btn ghost" onClick={logout}>Sign out</button>
-        </div>
-      </header>
+      <TopNav>
+        <span className={connected ? 'pill live' : 'pill'}>
+          <span className="dot" /> {connected ? 'LIVE' : 'offline'}
+        </span>
+        <button className="btn" onClick={runSample} disabled={busy}>
+          {busy ? 'Ingesting…' : 'Ingest sample logs'}
+        </button>
+      </TopNav>
 
       {error && <div className="error banner">{error}</div>}
 
