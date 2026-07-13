@@ -2,6 +2,9 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuth } from './auth';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { ScanningPage } from './pages/ScanningPage';
+import { ThreatsPage } from './pages/ThreatsPage';
+import { IncidentsPage } from './pages/IncidentsPage';
 import { EvidencePage } from './pages/EvidencePage';
 import { CompliancePage } from './pages/CompliancePage';
 
@@ -25,6 +28,9 @@ export function App() {
     <Routes>
       <Route path="/login" element={<Navigate to="/" replace />} />
       <Route path="/" element={<DashboardPage />} />
+      <Route path="/scanning" element={<ScanningPage />} />
+      <Route path="/threats" element={<ThreatsPage />} />
+      <Route path="/incidents" element={<IncidentsPage />} />
       <Route path="/evidence" element={<EvidencePage />} />
       <Route
         path="/compliance"

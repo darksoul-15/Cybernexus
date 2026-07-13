@@ -157,8 +157,24 @@ body {
 .custody { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .custody li { display: flex; align-items: center; gap: 10px; font-size: 12px; }
 
+/* Dropzone (log upload) */
+.dropzone {
+  border: 2px dashed var(--border); border-radius: 12px; padding: 28px 16px; text-align: center;
+  cursor: pointer; transition: all 0.15s ease; background: #0d131b;
+}
+.dropzone:hover, .dropzone.over { border-color: var(--accent); background: rgba(0, 224, 198, 0.05); }
+.dz-icon { font-size: 28px; color: var(--accent); margin-bottom: 6px; }
+.ingest-summary { margin-top: 12px; padding: 10px 12px; background: #0d131b; border-radius: 8px; font-size: 13px; border: 1px solid var(--border); }
+
+/* Intel verdict */
+.verdict { font-size: 18px; font-weight: 800; letter-spacing: 0.04em; }
+
+/* Small inline select in tables */
+.sm-select { padding: 4px 8px; font-size: 12px; width: auto; }
+
 @media (max-width: 860px) {
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .grid-2 { grid-template-columns: 1fr; }
   .topbar-left { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .nav { flex-wrap: wrap; }
 }

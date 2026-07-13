@@ -252,13 +252,22 @@ Verify (offline, in-memory DB): `cd server && npx tsx src/modules/evidence/evide
   work, or Merkle trees). It delivers tamper-evidence, not decentralization.
 
 ### Client UI coverage
-The React client (`/client`) has three authenticated views, all sharing a top nav:
-- **Dashboard** — live stats, Recharts, risk heat map, live threat feed (Modules 1–6).
+The React client (`/client`) covers all 8 modules across authenticated views
+sharing a top nav:
+- **Dashboard** — live stats, Recharts, risk heat map, live threat feed.
+- **Scanning** — add assets, run real TCP scans on localhost, view open ports +
+  banners + matched CVEs + CVSS + per-asset risk score (Module 2).
+- **Threats** — drag-drop an Apache/Nginx access log (or synthesize one) to
+  detect threats, browse the threat table, and run IP/domain intel lookups
+  (Modules 3 & 4).
+- **Incidents** — run the auto-response engine, watch threats correlate into
+  incident tickets, transition status, and view the simulated containment
+  blocklist (Module 6).
 - **Evidence Vault** — chain-integrity attestation, append records, browse the
-  ledger, and inspect any record's payload + chain-of-custody (Module 7).
+  ledger, inspect payload + chain-of-custody (Module 7).
 - **Compliance** *(admin-only)* — audit-trail table, actions-by-type + incident
-  posture, and one-click **PDF report download** (Module 8). The nav link is
-  hidden and the route guarded for non-admin users.
+  posture, and one-click **PDF report download** (Module 8). Nav link hidden and
+  route guarded for non-admins.
 
 ### ✅ Module 8 — Compliance Module
 Surfaces the audit trail and generates PDF compliance reports from real data.

@@ -1,14 +1,22 @@
 /** Minimal typed API client. Attaches the JWT and unwraps JSON/errors. */
 import type {
+  Asset,
   AuditLog,
   AuthResponse,
+  AutoRespondResult,
+  BlockedIpRecord,
+  BlockResult,
   ChainVerificationResult,
   ComplianceReport,
   DashboardSummary,
   EvidenceRecord,
+  Incident,
   IndicatorReputation,
   IngestSummary,
+  LogFormat,
+  ScanResult,
   ThreatEvent,
+  Vulnerability,
 } from '@cybernexus/shared';
 
 const TOKEN_KEY = 'cnx_token';
@@ -60,6 +68,34 @@ export const api = {
 
   lookup: (indicator: string) =>
     request<{ reputation: IndicatorReputation }>(`/intel/lookup/${encodeURIComponent(indicator)}`),
+
+  // Module 2 — Assets & Vulnerability Scanning
+  assets: () => request<{ assets: Asset[] }>('/assets'),
+  createAsset: (input: { name: string; type: Asset['type']; ipAddress: string; authorizedForScan: boolean }) =>
+    request<{ asset: Asset }>('/assets', { method: 'POST', body: JSON.stringify(input) }),
+  deleteAsset: (id: string) => request<void>(`/assets/${id}`, { method: 'DELETE' }),
+  startScan: (assetId: string, opts: { startPort?: number; endPort?: number; enrich?: boolean } = {}) =>
+    request<{ scan: ScanResult; openPorts: number; vulnerabilitiesFound: number; riskScore: number }>(
+      `/assets/${assetId}/scan`, { method: 'POST', body: JSON.stringify(opts) }),
+  scans: (assetId: string) => request<{ scans: ScanResult[] }>(`/assets/${assetId}/scans`),
+  vulnerabilities: (assetId?: string) =>
+    request<{ vulnerabilities: Vulnerability[] }>(`/vulnerabilities${assetId ? `?assetId=${assetId}` : ''}`),
+
+  // Module 3 — Log ingest (raw text or JSON)
+  ingest: (format: LogFormat, data: string | unknown[]) =>
+    request<IngestSummary>('/threats/ingest', { method: 'POST', body: JSON.stringify({ format, data }) }),
+
+  // Module 6 — Incidents & response
+  incidents: (status?: string) =>
+    request<{ incidents: Incident[] }>(`/incidents${status ? `?status=${status}` : ''}`),
+  autoRespond: (opts: { minScore?: number; autoBlock?: boolean } = {}) =>
+    request<AutoRespondResult>('/incidents/auto-respond', { method: 'POST', body: JSON.stringify(opts) }),
+  updateIncident: (id: string, patch: { status?: string }) =>
+    request<{ incident: Incident }>(`/incidents/${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
+  blockIp: (ip: string, reason?: string) =>
+    request<{ block: BlockResult }>('/incidents/block', { method: 'POST', body: JSON.stringify({ ip, reason }) }),
+  blocklist: () =>
+    request<{ blocklist: BlockedIpRecord[]; liveMode: boolean; realFirewall: boolean }>('/incidents/blocklist'),
 
   // Module 7 — Evidence Vault
   evidenceList: () => request<{ evidence: EvidenceRecord[] }>('/evidence'),

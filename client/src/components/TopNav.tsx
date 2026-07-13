@@ -15,7 +15,10 @@ export function TopNav({ children }: { children?: ReactNode }) {
         </div>
         <nav className="nav">
           <NavLink to="/" end className={linkClass}>Dashboard</NavLink>
-          <NavLink to="/evidence" className={linkClass}>Evidence Vault</NavLink>
+          <NavLink to="/scanning" className={linkClass}>Scanning</NavLink>
+          <NavLink to="/threats" className={linkClass}>Threats</NavLink>
+          <NavLink to="/incidents" className={linkClass}>Incidents</NavLink>
+          <NavLink to="/evidence" className={linkClass}>Evidence</NavLink>
           {user?.role === 'admin' && <NavLink to="/compliance" className={linkClass}>Compliance</NavLink>}
         </nav>
       </div>
