@@ -21,6 +21,10 @@ import type {
 
 const TOKEN_KEY = 'cnx_token';
 
+// Backend origin. Empty in dev (Vite proxies /api → :4000); set VITE_API_URL to
+// the deployed backend URL (e.g. https://cybernexus-api.onrender.com) in prod.
+export const API_BASE = import.meta.env.VITE_API_URL ?? '';
+
 export const tokenStore = {
   get: () => localStorage.getItem(TOKEN_KEY),
   set: (t: string) => localStorage.setItem(TOKEN_KEY, t),
@@ -29,7 +33,7 @@ export const tokenStore = {
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = tokenStore.get();
-  const res = await fetch(`/api${path}`, {
+  const res = await fetch(`${API_BASE}/api${path}`, {
     ...options,
     headers: {
       'content-type': 'application/json',
@@ -119,7 +123,7 @@ export const api = {
   // PDF is a binary download — fetch directly and trigger a browser save.
   downloadReportPdf: async () => {
     const token = tokenStore.get();
-    const res = await fetch('/api/compliance/report.pdf', {
+    const res = await fetch(`${API_BASE}/api/compliance/report.pdf`, {
       headers: token ? { authorization: `Bearer ${token}` } : {},
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
