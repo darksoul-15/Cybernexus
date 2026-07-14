@@ -4,10 +4,10 @@ import { api } from '../api';
 import { TopNav } from '../components/TopNav';
 
 const SEV_COLORS: Record<string, string> = {
-  critical: '#ff3b6b', high: '#ff8a3d', medium: '#ffd23d', low: '#3dd6ff', info: '#8a94a6',
+  critical: '#e53935', high: '#fb8c00', medium: '#f9a825', low: '#1e88e5', info: '#78909c',
 };
 const VERDICT_COLORS: Record<string, string> = {
-  malicious: '#ff3b6b', suspicious: '#ff8a3d', clean: '#00e0c6', unknown: '#8a94a6',
+  malicious: '#e53935', suspicious: '#fb8c00', clean: '#2f9d4e', unknown: '#78909c',
 };
 
 export function ThreatsPage() {

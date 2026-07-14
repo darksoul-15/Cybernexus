@@ -10,9 +10,9 @@ import { StatCard } from '../components/StatCard';
 import { TopNav } from '../components/TopNav';
 
 const SEV_COLORS: Record<string, string> = {
-  critical: '#ff3b6b', high: '#ff8a3d', medium: '#ffd23d', low: '#3dd6ff', info: '#8a94a6',
+  critical: '#e53935', high: '#fb8c00', medium: '#f9a825', low: '#1e88e5', info: '#78909c',
 };
-const CAT_COLOR = '#00e0c6';
+const CAT_COLOR = '#34a853';
 
 export function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -98,8 +98,8 @@ export function DashboardPage() {
 
       <section className="stat-grid">
         <StatCard label="Assets monitored" value={summary.assets.total} sub={`${summary.assets.scannable} scannable`} />
-        <StatCard label="Open vulnerabilities" value={summary.vulnerabilities.open} accent="#ff8a3d" sub={`${summary.vulnerabilities.total} total`} />
-        <StatCard label="Threat events" value={t.total} accent="#00e0c6" sub={`${t.unacknowledged} unacknowledged`} />
+        <StatCard label="Open vulnerabilities" value={summary.vulnerabilities.open} accent="#fb8c00" sub={`${summary.vulnerabilities.total} total`} />
+        <StatCard label="Threat events" value={t.total} accent="#2f9d4e" sub={`${t.unacknowledged} unacknowledged`} />
         <StatCard label="Incidents" value={summary.incidents.total} sub="open cases" />
       </section>
 
@@ -111,9 +111,9 @@ export function DashboardPage() {
           ) : (
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={catData} margin={{ top: 8, right: 8, bottom: 8, left: -18 }}>
-                <XAxis dataKey="name" tick={{ fill: '#8a94a6', fontSize: 11 }} interval={0} angle={-12} textAnchor="end" height={50} />
-                <YAxis allowDecimals={false} tick={{ fill: '#8a94a6', fontSize: 11 }} />
-                <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
+                <XAxis dataKey="name" tick={{ fill: '#5f7688', fontSize: 11 }} interval={0} angle={-12} textAnchor="end" height={50} />
+                <YAxis allowDecimals={false} tick={{ fill: '#5f7688', fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(52,168,83,0.08)' }} />
                 <Bar dataKey="count" fill={CAT_COLOR} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -198,4 +198,4 @@ function Empty({ text = 'No data yet' }: { text?: string }) {
   return <div className="empty muted">{text}</div>;
 }
 
-const tooltipStyle = { background: '#141a24', border: '1px solid #263041', borderRadius: 8, color: '#e6edf5' } as const;
+const tooltipStyle = { background: '#ffffff', border: '1px solid rgba(22,40,58,0.12)', borderRadius: 10, color: '#16283a', boxShadow: '0 8px 24px rgba(28,78,50,0.14)' } as const;

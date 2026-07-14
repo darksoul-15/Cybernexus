@@ -4,7 +4,7 @@ import { api } from '../api';
 import { TopNav } from '../components/TopNav';
 
 const SEV_COLORS: Record<string, string> = {
-  critical: '#ff3b6b', high: '#ff8a3d', medium: '#ffd23d', low: '#3dd6ff', info: '#8a94a6',
+  critical: '#e53935', high: '#fb8c00', medium: '#f9a825', low: '#1e88e5', info: '#78909c',
 };
 const ASSET_TYPES: Asset['type'][] = ['host', 'service', 'container', 'web-app'];
 
