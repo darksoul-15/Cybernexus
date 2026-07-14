@@ -23,6 +23,10 @@ export const env = {
   // gracefully to "unknown" when a key is absent rather than fabricating data).
   abuseipdbApiKey: process.env.ABUSEIPDB_API_KEY ?? '',
   virustotalApiKey: process.env.VIRUSTOTAL_API_KEY ?? '',
+  // AI Threat Analyst (Anthropic). Optional — the feature reports unavailable
+  // (never fabricates) when the key is absent.
+  anthropicApiKey: process.env.ANTHROPIC_API_KEY ?? '',
+  aiModel: process.env.AI_MODEL ?? 'claude-sonnet-5',
   // Module 6 — Automated Incident Response.
   // Threats at/above this score auto-generate an incident.
   autoIncidentMinScore: Number(process.env.AUTO_INCIDENT_MIN_SCORE ?? 70),

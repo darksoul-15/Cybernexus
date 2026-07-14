@@ -376,6 +376,27 @@ export interface ChainVerificationResult {
   verifiedAt: ISODate;
 }
 
+// ── AI Threat Analyst (LLM analysis over detected threats) ──────────────────
+export type AiSeverity = 'low' | 'medium' | 'high' | 'critical';
+
+// Structured assessment returned by the LLM (schema-validated on the server).
+export interface AiThreatAssessment {
+  severity: AiSeverity;
+  headline: string; // one-line situation summary
+  attackNarrative: string; // what the attacker appears to be doing
+  correlatedIps: string[]; // source IPs the model tied together
+  recommendedActions: string[]; // prioritized response steps
+  confidence: number; // 0–100
+}
+
+export interface AiAnalysisResponse {
+  available: boolean; // false when ANTHROPIC_API_KEY is not configured
+  model?: string;
+  analyzedThreats?: number;
+  assessment?: AiThreatAssessment;
+  error?: string;
+}
+
 // ── Module 8: Compliance Module ─────────────────────────────────────────────
 export interface ComplianceReport {
   generatedAt: ISODate;

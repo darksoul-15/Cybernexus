@@ -1,5 +1,6 @@
 /** Minimal typed API client. Attaches the JWT and unwraps JSON/errors. */
 import type {
+  AiAnalysisResponse,
   Asset,
   AuditLog,
   AuthResponse,
@@ -88,6 +89,9 @@ export const api = {
   // Module 3 — Log ingest (raw text or JSON)
   ingest: (format: LogFormat, data: string | unknown[]) =>
     request<IngestSummary>('/threats/ingest', { method: 'POST', body: JSON.stringify({ format, data }) }),
+
+  // AI Threat Analyst
+  analyzeThreats: () => request<AiAnalysisResponse>('/ai/analyze', { method: 'POST', body: '{}' }),
 
   // Module 6 — Incidents & response
   incidents: (status?: string) =>

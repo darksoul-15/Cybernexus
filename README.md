@@ -296,6 +296,25 @@ Verify (offline, in-memory DB): `cd server && npx tsx src/modules/compliance/com
 
 ---
 
+## ✦ AI Threat Analyst (LLM analysis)
+A genuine AI layer on top of the statistical/signature detectors: it sends the
+recently detected `ThreatEvent`s to **Claude** (`claude-sonnet-5`) and gets back a
+schema-validated assessment — severity, attack narrative, correlated IPs, and
+prioritized recommended actions. The deterministic detectors remain the source of
+truth; the LLM only reasons over their real output (no fabricated threats).
+
+- Uses the Anthropic SDK with **structured outputs** (JSON-schema-constrained
+  response) so the result always validates to a typed shape.
+- Degrades gracefully: without `ANTHROPIC_API_KEY` the endpoint returns
+  `available:false` instead of fabricating — same pattern as the NVD/AbuseIPDB
+  integrations.
+- Surfaced as an **"AI Threat Analyst" card** on the Threats page (button →
+  assessment); endpoint `POST /api/ai/analyze` (auth, audited).
+- Config: `ANTHROPIC_API_KEY` + optional `AI_MODEL` (default `claude-sonnet-5`).
+
+Verify (offline; runs a live analysis too if `ANTHROPIC_API_KEY` is set):
+`cd server && npx tsx src/modules/ai/ai.smoke.ts`.
+
 ## 🎉 All 8 modules complete
 Every module ships end-to-end (scan/detect/enrich → store → display → report) and
 is backed by an offline smoke test. Run them all:

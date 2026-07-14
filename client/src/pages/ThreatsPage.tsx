@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type DragEvent } from 'react';
-import type { IndicatorReputation, IngestSummary, ThreatEvent } from '@cybernexus/shared';
+import type { AiAnalysisResponse, IndicatorReputation, IngestSummary, ThreatEvent } from '@cybernexus/shared';
 import { api } from '../api';
 import { TopNav } from '../components/TopNav';
 
@@ -96,6 +96,8 @@ export function ThreatsPage() {
         <IntelPanel />
       </section>
 
+      <AiAnalystPanel />
+
       <section className="card">
         <h3>Detected threats ({threats.length})</h3>
         {threats.length === 0 ? <div className="empty muted">No threats yet — ingest a log or generate a sample.</div> : (
@@ -168,5 +170,67 @@ function IntelPanel() {
         </div>
       )}
     </div>
+  );
+}
+
+const AI_SEV_COLORS: Record<string, string> = {
+  critical: '#e53935', high: '#fb8c00', medium: '#f9a825', low: '#1e88e5',
+};
+
+function AiAnalystPanel() {
+  const [result, setResult] = useState<AiAnalysisResponse | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const analyze = async () => {
+    setBusy(true);
+    try { setResult(await api.analyzeThreats()); }
+    catch (e) { setResult({ available: true, error: (e as Error).message }); }
+    finally { setBusy(false); }
+  };
+
+  const a = result?.assessment;
+  return (
+    <section className="card" style={{ marginBottom: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+        <div>
+          <h3 style={{ margin: 0 }}>✦ AI Threat Analyst</h3>
+          <p className="muted" style={{ margin: '4px 0 0', fontSize: 13 }}>
+            Claude reasons over your detected threats and returns a SOC-analyst assessment.
+          </p>
+        </div>
+        <button className="btn primary" onClick={analyze} disabled={busy}>
+          {busy ? 'Analyzing…' : 'Analyze recent threats'}
+        </button>
+      </div>
+
+      {result && !a && (
+        <div className={result.available ? 'ingest-summary' : 'error'} style={{ marginTop: 12 }}>
+          {result.error ?? 'No result.'}
+          {result.available === false && (
+            <span className="muted"> — set ANTHROPIC_API_KEY in the server .env to enable.</span>
+          )}
+        </div>
+      )}
+
+      {a && (
+        <div style={{ marginTop: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span className="tag" style={{ color: AI_SEV_COLORS[a.severity], fontWeight: 700 }}>{a.severity.toUpperCase()}</span>
+            <strong style={{ fontSize: 15 }}>{a.headline}</strong>
+            <span className="muted" style={{ fontSize: 12 }}>· confidence {a.confidence} · {result?.model} · {result?.analyzedThreats} threats</span>
+          </div>
+          <p style={{ marginTop: 10, lineHeight: 1.55 }}>{a.attackNarrative}</p>
+          {a.correlatedIps.length > 0 && (
+            <div className="chip-row" style={{ marginTop: 4 }}>
+              {a.correlatedIps.map((ip) => <span key={ip} className="tag mono">{ip}</span>)}
+            </div>
+          )}
+          <h4 style={{ margin: '12px 0 6px', fontSize: 13 }}>Recommended actions</h4>
+          <ul style={{ margin: 0, paddingLeft: 20, lineHeight: 1.6 }}>
+            {a.recommendedActions.map((step, i) => <li key={i}>{step}</li>)}
+          </ul>
+        </div>
+      )}
+    </section>
   );
 }

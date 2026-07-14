@@ -12,6 +12,7 @@ import dashboardRoutes from './modules/dashboard/dashboard.routes.js';
 import incidentRoutes from './modules/incident/incident.routes.js';
 import evidenceRoutes from './modules/evidence/evidence.routes.js';
 import complianceRoutes from './modules/compliance/compliance.routes.js';
+import aiRoutes from './modules/ai/ai.routes.js';
 import { notFound, errorHandler } from './middleware/error.js';
 
 export function createApp(): Express {
@@ -32,6 +33,7 @@ export function createApp(): Express {
   app.use('/api/intel', intelRoutes);
   app.use('/api/dashboard', dashboardRoutes);
   app.use('/api/incidents', incidentRoutes);
+  app.use('/api/ai', aiRoutes);
   app.use('/api/evidence', evidenceRoutes);
   app.use('/api/compliance', complianceRoutes);
   app.use('/api', vulnRoutes);
