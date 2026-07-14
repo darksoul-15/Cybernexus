@@ -14,7 +14,7 @@ async function main(): Promise<void> {
 
   // Socket.io: live dashboard channel. A valid JWT is required to connect.
   const io = new SocketServer(httpServer, {
-    cors: { origin: env.clientOrigin, credentials: true },
+    cors: { origin: env.serveClient ? true : env.clientOrigin, credentials: true },
   });
   io.use((socket, next) => {
     const token = socket.handshake.auth?.token as string | undefined;

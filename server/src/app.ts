@@ -1,3 +1,5 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import express, { type Express } from 'express';
 import cors from 'cors';
 import { env } from './config/env.js';
@@ -15,7 +17,8 @@ import { notFound, errorHandler } from './middleware/error.js';
 export function createApp(): Express {
   const app = express();
 
-  app.use(cors({ origin: env.clientOrigin, credentials: true }));
+  // Same-origin when serving the client ourselves; else restrict to the SPA origin.
+  app.use(cors({ origin: env.serveClient ? true : env.clientOrigin, credentials: true }));
   app.use(express.json());
   app.set('trust proxy', true);
 
@@ -32,6 +35,20 @@ export function createApp(): Express {
   app.use('/api/evidence', evidenceRoutes);
   app.use('/api/compliance', complianceRoutes);
   app.use('/api', vulnRoutes);
+
+  // Single-service deploy: serve the built React client for non-API routes,
+  // with SPA fallback so client-side routing works on refresh/deep links.
+  if (env.serveClient) {
+    // Resolve relative to this module (server/src or server/dist) → repo/client/dist,
+    // so it works under tsx and compiled, independent of the working directory.
+    const here = path.dirname(fileURLToPath(import.meta.url));
+    const clientDist = path.resolve(here, '..', '..', 'client', 'dist');
+    app.use(express.static(clientDist));
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api')) return next();
+      res.sendFile(path.join(clientDist, 'index.html'));
+    });
+  }
 
   app.use(notFound);
   app.use(errorHandler);

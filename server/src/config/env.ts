@@ -31,6 +31,9 @@ export const env = {
   // Second, separate opt-in required to actually execute an OS firewall command.
   // Kept off by default so no disruptive action runs without explicit intent.
   responseAllowRealFirewall: process.env.RESPONSE_ALLOW_REAL_FIREWALL === 'true',
+  // When true, the server also serves the built React client (single-service
+  // deploy). Left false in local dev, where Vite serves the frontend.
+  serveClient: process.env.SERVE_CLIENT === 'true',
   smtp: {
     host: process.env.SMTP_HOST ?? '',
     port: Number(process.env.SMTP_PORT ?? 587),

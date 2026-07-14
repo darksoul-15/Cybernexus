@@ -1,23 +1,25 @@
-# Render blueprint for the CYBERNEXUS X backend (API + Socket.io).
-# Create the service via Render → New → Blueprint, pointing at this repo.
-# Set MONGODB_URI and CLIENT_ORIGIN in the dashboard (marked sync:false below).
+# Render blueprint — single service hosting BOTH the API and the React client.
+# The Express server serves client/dist in production (SERVE_CLIENT=true), so the
+# whole app lives at one URL with no CORS/cross-origin setup.
+# Create via Render → New → Blueprint, pointing at this repo.
 services:
   - type: web
-    name: cybernexus-api
+    name: cybernexus-x
     runtime: node
     plan: free
-    buildCommand: npm install && npm run build:shared && npm run build -w server
+    buildCommand: npm install && npm run build:shared && npm run build -w client && npm run build -w server
     startCommand: node server/dist/server.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: SERVE_CLIENT
+        value: 'true' # Express serves the built React client
       - key: JWT_SECRET
         generateValue: true # Render generates a strong secret
       - key: MONGODB_URI
         sync: false # paste your MongoDB Atlas connection string
-      - key: CLIENT_ORIGIN
-        sync: false # set to your Vercel frontend URL, e.g. https://cybernexus.vercel.app
       # Optional integrations (leave unset to run without them):
       # - key: ABUSEIPDB_API_KEY
       # - key: VIRUSTOTAL_API_KEY
+      # - key: SMTP_HOST  (+ SMTP_PORT / SMTP_USER / SMTP_PASS / ALERT_FROM / ALERT_TO)
