@@ -21,7 +21,13 @@ services:
         generateValue: true # Render generates a strong secret
       - key: MONGODB_URI
         sync: false # paste your MongoDB Atlas connection string
-      # Optional integrations (leave unset to run without them):
+      # AI Threat Analyst (optional). Leave blank to run without it — the endpoint
+      # reports available:false instead of fabricating.
+      - key: ANTHROPIC_API_KEY
+        sync: false # paste your Anthropic key, or leave blank
+      - key: AI_MODEL
+        value: claude-sonnet-5
+      # Other optional integrations (leave unset to run without them):
       # - key: ABUSEIPDB_API_KEY
       # - key: VIRUSTOTAL_API_KEY
       # - key: SMTP_HOST  (+ SMTP_PORT / SMTP_USER / SMTP_PASS / ALERT_FROM / ALERT_TO)
