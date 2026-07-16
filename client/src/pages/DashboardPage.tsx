@@ -10,9 +10,10 @@ import { StatCard } from '../components/StatCard';
 import { TopNav } from '../components/TopNav';
 
 const SEV_COLORS: Record<string, string> = {
-  critical: '#e53935', high: '#fb8c00', medium: '#f9a825', low: '#1e88e5', info: '#78909c',
+  critical: '#ff6f7a', high: '#ffab5e', medium: '#f5c451', low: '#6ea8ff', info: '#8d8ba1',
 };
-const CAT_COLOR = '#34a853';
+const CAT_COLOR = '#9b9ae8';
+const AXIS_TICK = '#8d8ba1';
 
 export function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -111,9 +112,9 @@ export function DashboardPage() {
           ) : (
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={catData} margin={{ top: 8, right: 8, bottom: 8, left: -18 }}>
-                <XAxis dataKey="name" tick={{ fill: '#5f7688', fontSize: 11 }} interval={0} angle={-12} textAnchor="end" height={50} />
-                <YAxis allowDecimals={false} tick={{ fill: '#5f7688', fontSize: 11 }} />
-                <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(52,168,83,0.08)' }} />
+                <XAxis dataKey="name" tick={{ fill: AXIS_TICK, fontSize: 11 }} interval={0} angle={-12} textAnchor="end" height={50} />
+                <YAxis allowDecimals={false} tick={{ fill: AXIS_TICK, fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(155,154,232,0.10)' }} />
                 <Bar dataKey="count" fill={CAT_COLOR} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -198,4 +199,4 @@ function Empty({ text = 'No data yet' }: { text?: string }) {
   return <div className="empty muted">{text}</div>;
 }
 
-const tooltipStyle = { background: '#ffffff', border: '1px solid rgba(22,40,58,0.12)', borderRadius: 10, color: '#16283a', boxShadow: '0 8px 24px rgba(28,78,50,0.14)' } as const;
+const tooltipStyle = { background: '#1e1c29', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, color: '#eeedf6', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' } as const;

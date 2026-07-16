@@ -5,7 +5,7 @@ import { useAuth } from '../auth';
 import { TopNav } from '../components/TopNav';
 
 const SEV_COLORS: Record<string, string> = {
-  critical: '#e53935', high: '#fb8c00', medium: '#f9a825', low: '#1e88e5', info: '#78909c',
+  critical: '#ff6f7a', high: '#ffab5e', medium: '#f5c451', low: '#6ea8ff', info: '#8d8ba1',
 };
 const STATUSES = ['new', 'investigating', 'contained', 'resolved', 'closed'];
 
