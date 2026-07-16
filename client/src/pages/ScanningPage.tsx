@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Asset, ScanResult, Vulnerability } from '@cybernexus/shared';
 import { api } from '../api';
+import { useAuth } from '../auth';
 import { TopNav } from '../components/TopNav';
 
 const SEV_COLORS: Record<string, string> = {
@@ -9,6 +10,7 @@ const SEV_COLORS: Record<string, string> = {
 const ASSET_TYPES: Asset['type'][] = ['host', 'service', 'container', 'web-app'];
 
 export function ScanningPage() {
+  const { user } = useAuth();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [selected, setSelected] = useState<Asset | null>(null);
   const [scan, setScan] = useState<ScanResult | null>(null);
@@ -54,9 +56,13 @@ export function ScanningPage() {
     finally { setScanning(false); }
   };
 
-  const del = async (id: string) => {
-    try { await api.deleteAsset(id); if (selected?._id === id) { setSelected(null); setScan(null); } await loadAssets(); }
-    catch (e) { setError((e as Error).message); }
+  const del = async (asset: Asset) => {
+    if (!window.confirm(`Delete asset "${asset.name}" (${asset.ipAddress})? Its scan history and matched vulnerabilities will also be removed. This cannot be undone.`)) return;
+    try {
+      await api.deleteAsset(asset._id);
+      if (selected?._id === asset._id) { setSelected(null); setScan(null); }
+      await loadAssets();
+    } catch (e) { setError((e as Error).message); }
   };
 
   return (
@@ -126,7 +132,9 @@ export function ScanningPage() {
                       <button className="btn sm" onClick={() => runScan(a)} disabled={scanning}>
                         {scanning && selected?._id === a._id ? 'Scanning…' : 'Scan'}
                       </button>
-                      <button className="btn ghost sm" onClick={() => del(a._id)}>del</button>
+                      {user?.role === 'admin' && (
+                        <button className="btn ghost sm danger" onClick={() => del(a)} title="Delete asset">Delete</button>
+                      )}
                     </td>
                   </tr>
                 ))}

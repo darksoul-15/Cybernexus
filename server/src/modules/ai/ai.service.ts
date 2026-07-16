@@ -43,6 +43,37 @@ function getClient(): Anthropic | null {
   return client;
 }
 
+/**
+ * Map an Anthropic SDK exception to an actionable, non-technical message.
+ * The full error is always logged server-side; only a clean summary reaches the client.
+ */
+function friendlyAiError(e: unknown): string {
+  console.error('[ai.analyze] Anthropic API error:', e);
+
+  if (e instanceof Anthropic.AuthenticationError) {
+    return 'AI service authentication failed — check that ANTHROPIC_API_KEY is set correctly on the server.';
+  }
+  if (e instanceof Anthropic.PermissionDeniedError) {
+    return 'AI service permission denied — this API key does not have access to the configured model.';
+  }
+  if (e instanceof Anthropic.RateLimitError) {
+    return 'AI service is rate-limited right now — try again in a moment.';
+  }
+  if (e instanceof Anthropic.BadRequestError) {
+    if (/credit balance/i.test(e.message)) {
+      return 'AI service unavailable — the connected Anthropic account has no API credit. Add billing at console.anthropic.com to enable AI analysis.';
+    }
+    return 'AI service rejected the request — the account or model configuration may need attention.';
+  }
+  if (e instanceof Anthropic.APIConnectionError) {
+    return 'Could not reach the AI service — network error contacting Anthropic.';
+  }
+  if (e instanceof Anthropic.APIError) {
+    return `AI service error (HTTP ${e.status ?? '?'}) — see server logs for details.`;
+  }
+  return 'AI analysis failed unexpectedly — see server logs for details.';
+}
+
 /** Compact, deterministic text summary of the threats for the prompt. */
 export function buildThreatSummary(
   threats: Array<{ category: string; severity: string; sourceIp?: string | null; score: number; description: string; detectedAt?: Date }>
@@ -92,6 +123,6 @@ export async function analyzeRecentThreats(limit = 25): Promise<AiAnalysisRespon
     }
     return { available: true, model: env.aiModel, analyzedThreats: threats.length, assessment: parsed };
   } catch (e) {
-    return { available: true, model: env.aiModel, analyzedThreats: threats.length, error: `AI analysis failed: ${(e as Error).message}` };
+    return { available: true, model: env.aiModel, analyzedThreats: threats.length, error: friendlyAiError(e) };
   }
 }

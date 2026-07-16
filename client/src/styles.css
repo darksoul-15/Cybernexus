@@ -109,6 +109,7 @@ body {
 .btn.primary:hover { color: var(--accent-ink); transform: translateY(-2px); box-shadow: 0 12px 30px rgba(120, 110, 230, 0.52); }
 .btn.ghost { background: transparent; border-color: var(--border); }
 .btn.ghost:hover { background: var(--accent-soft); border-color: var(--accent-border); }
+.btn.danger:hover { background: rgba(255, 111, 122, 0.12); border-color: rgba(255, 111, 122, 0.4); color: var(--bad); }
 .btn.sm { padding: 5px 12px; font-size: 12px; }
 .btn:disabled { opacity: 0.5; cursor: default; box-shadow: none; transform: none; }
 
