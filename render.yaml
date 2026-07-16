@@ -27,7 +27,11 @@ services:
         sync: false # paste your Anthropic key, or leave blank
       - key: AI_MODEL
         value: claude-sonnet-5
+      # Threat Intelligence lookups (optional). Leave blank to run without them —
+      # the endpoint reports available:false per-provider instead of fabricating.
+      - key: ABUSEIPDB_API_KEY
+        sync: false # paste your AbuseIPDB key, or leave blank
+      - key: VIRUSTOTAL_API_KEY
+        sync: false # paste your VirusTotal key, or leave blank
       # Other optional integrations (leave unset to run without them):
-      # - key: ABUSEIPDB_API_KEY
-      # - key: VIRUSTOTAL_API_KEY
       # - key: SMTP_HOST  (+ SMTP_PORT / SMTP_USER / SMTP_PASS / ALERT_FROM / ALERT_TO)
