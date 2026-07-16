@@ -1,0 +1,10 @@
+# Never apply line-ending conversion or text diffing to binary formats.
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.ico binary
