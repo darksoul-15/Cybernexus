@@ -292,6 +292,15 @@ select.input option { background: var(--panel); color: var(--text); }
 /* ── Intel verdict ────────────────────────────────────────────────────── */
 .verdict { font-size: 18px; font-weight: 800; letter-spacing: 0.04em; }
 
+/* ── AI Analyst: recommended-actions list ─────────────────────────────── */
+.ai-actions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.ai-actions li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.5; }
+.ai-step-num {
+  flex-shrink: 0; width: 22px; height: 22px; border-radius: 7px; margin-top: 1px;
+  display: grid; place-items: center; font-size: 12px; font-weight: 700;
+  background: var(--accent-soft); color: var(--accent-2); border: 1px solid var(--accent-border);
+}
+
 /* Small inline select in tables */
 .sm-select { padding: 4px 8px; font-size: 12px; width: auto; }
 

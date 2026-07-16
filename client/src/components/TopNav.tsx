@@ -26,6 +26,9 @@ const IconEvidence = () => (
 const IconReport = () => (
   <svg {...ico({})}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" /><path d="M14 2v6h6" /><path d="M8 13h8M8 17h8M8 9h2" /></svg>
 );
+const IconAi = () => (
+  <svg {...ico({})}><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3Z" /><path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2Z" /></svg>
+);
 const IconSpark = () => (
   <svg {...ico({ className: undefined })} width="18" height="18"><path d="M12 3v4M12 17v4M3 12h4M17 12h4" /><path d="M12 8a4 4 0 0 0 0 8 4 4 0 0 0 0-8Z" /></svg>
 );
@@ -35,6 +38,7 @@ const TITLES: Record<string, string> = {
   '/': 'SOC Dashboard',
   '/scanning': 'Vulnerability Scanning',
   '/threats': 'Threat Detection',
+  '/ai': 'AI Threat Analyst',
   '/incidents': 'Incident Response',
   '/evidence': 'Evidence Vault',
   '/compliance': 'Compliance & Reports',
@@ -65,6 +69,7 @@ export function TopNav({ children }: { children?: ReactNode }) {
           <NavLink to="/" end className={linkClass}><IconDashboard />Dashboard</NavLink>
           <NavLink to="/scanning" className={linkClass}><IconScan />Scanning</NavLink>
           <NavLink to="/threats" className={linkClass}><IconThreat />Threats</NavLink>
+          <NavLink to="/ai" className={linkClass}><IconAi />AI Analyst</NavLink>
         </nav>
 
         <div className="side-section">Respond</div>

@@ -4,6 +4,7 @@ import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ScanningPage } from './pages/ScanningPage';
 import { ThreatsPage } from './pages/ThreatsPage';
+import { AiAnalystPage } from './pages/AiAnalystPage';
 import { IncidentsPage } from './pages/IncidentsPage';
 import { EvidencePage } from './pages/EvidencePage';
 import { CompliancePage } from './pages/CompliancePage';
@@ -30,6 +31,7 @@ export function App() {
       <Route path="/" element={<DashboardPage />} />
       <Route path="/scanning" element={<ScanningPage />} />
       <Route path="/threats" element={<ThreatsPage />} />
+      <Route path="/ai" element={<AiAnalystPage />} />
       <Route path="/incidents" element={<IncidentsPage />} />
       <Route path="/evidence" element={<EvidencePage />} />
       <Route
