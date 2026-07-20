@@ -11,6 +11,7 @@ import type {
   ComplianceReport,
   DashboardSummary,
   EvidenceRecord,
+  ForgotPasswordResponse,
   Incident,
   IndicatorReputation,
   IngestSummary,
@@ -62,6 +63,10 @@ export const api = {
   register: (email: string, password: string, name: string, role?: 'admin' | 'analyst') =>
     request<AuthResponse>('/auth/register', { method: 'POST', body: JSON.stringify({ email, password, name, role }) }),
   me: () => request<{ user: AuthResponse['user'] }>('/auth/me'),
+  forgotPassword: (email: string) =>
+    request<ForgotPasswordResponse>('/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) }),
+  resetPassword: (token: string, password: string) =>
+    request<{ message: string }>('/auth/reset-password', { method: 'POST', body: JSON.stringify({ token, password }) }),
 
   dashboard: () => request<DashboardSummary>('/dashboard/summary'),
 

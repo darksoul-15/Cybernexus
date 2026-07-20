@@ -207,6 +207,22 @@ export interface AuthResponse {
   tokens: AuthTokens;
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ForgotPasswordResponse {
+  message: string;
+  // Whether the server has SMTP configured at all — a constant independent of
+  // whether the requested email exists, so it never leaks account existence.
+  emailAvailable: boolean;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  password: string;
+}
+
 // ── Module 3: AI Threat Detection ───────────────────────────────────────────
 // Normalized log entry — the unit of input to the detection engine. Produced
 // by parsing access logs (combined/common format) or supplied as JSON.

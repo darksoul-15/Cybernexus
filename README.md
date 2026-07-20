@@ -53,6 +53,9 @@ cd server && npx tsx src/smoke.ts
 ### ✅ Module 1 — Foundation
 - Monorepo with npm workspaces (`/shared`, `/server`, `/client`).
 - JWT auth: `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me`.
+- Password reset: `POST /api/auth/forgot-password`, `POST /api/auth/reset-password` —
+  single-use, hashed, 1-hour-expiry tokens; the response is identical whether or not
+  the email is registered (no account-enumeration side channel).
 - Roles: `admin` / `analyst`; `requireAuth` + `requireRole` middleware.
 - All 8 domain schemas defined as shared TS types **and** Mongoose models:
   User, Asset, ScanResult, Vulnerability, ThreatEvent, Incident, EvidenceRecord, AuditLog.
@@ -61,7 +64,10 @@ cd server && npx tsx src/smoke.ts
 
 **What's real vs. architecturally simplified (Module 1):**
 - *Real:* bcrypt password hashing, JWT signing/verification, Mongoose persistence,
-  role-based route guards, request validation (zod), audit trail writes.
+  role-based route guards, request validation (zod), audit trail writes. Password
+  reset sends a genuine email via the same SMTP transport as incident alerting
+  (Module 6); with no SMTP configured, it degrades honestly — the link is logged
+  server-side rather than the endpoint claiming a delivery that didn't happen.
 - *Simplified:* access-token-only auth (no refresh-token rotation yet) — adequate for
   a portfolio SOC; documented rather than hidden.
 

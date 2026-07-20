@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../auth';
+import { PasswordField } from '../components/PasswordField';
 
 export function LoginPage() {
   const { login, register } = useAuth();
@@ -51,10 +53,18 @@ export function LoginPage() {
           Email
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </label>
-        <label>
-          Password
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
-        </label>
+        <PasswordField
+          id="password"
+          label="Password"
+          value={password}
+          onChange={setPassword}
+          autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+        />
+        {mode === 'login' && (
+          <p className="hint muted" style={{ textAlign: 'right', margin: '-6px 0 0' }}>
+            <Link to="/forgot-password">Forgot password?</Link>
+          </p>
+        )}
 
         {error && <div className="error">{error}</div>}
 

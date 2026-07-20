@@ -92,6 +92,20 @@ body {
 .tab { flex: 1; padding: 8px; background: transparent; border: 1px solid var(--border-strong); border-radius: 999px; color: var(--muted); cursor: pointer; transition: all 0.18s var(--ease); }
 .tab.active { border-color: var(--accent-border); color: var(--accent-2); background: var(--accent-soft); }
 .hint { font-size: 12px; text-align: center; }
+.hint a { color: var(--accent-2); text-decoration: none; }
+.hint a:hover { text-decoration: underline; }
+
+/* Password visibility toggle */
+.password-field { position: relative; }
+.password-field input { width: 100%; padding-right: 40px; }
+.password-toggle {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  display: grid; place-items: center; width: 30px; height: 30px; padding: 0;
+  background: transparent; border: none; border-radius: 8px; color: var(--muted); cursor: pointer;
+  transition: color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.password-toggle:hover { color: var(--accent-2); background: var(--accent-soft); }
+.password-toggle:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--accent-soft); }
 
 /* ── Buttons ──────────────────────────────────────────────────────────── */
 .btn {
