@@ -33,5 +33,19 @@ services:
         sync: false # paste your AbuseIPDB key, or leave blank
       - key: VIRUSTOTAL_API_KEY
         sync: false # paste your VirusTotal key, or leave blank
-      # Other optional integrations (leave unset to run without them):
-      # - key: SMTP_HOST  (+ SMTP_PORT / SMTP_USER / SMTP_PASS / ALERT_FROM / ALERT_TO)
+      # SMTP email (optional). Powers real delivery for incident alerts (Module 6)
+      # and password-reset links (Module 1). Leave unset to run without it — incident
+      # alerts stay in-app-only, and password reset logs the link server-side instead
+      # of claiming a delivery that didn't happen.
+      - key: SMTP_HOST
+        sync: false # e.g. smtp.sendgrid.net, smtp.mailgun.org, smtp.gmail.com
+      - key: SMTP_PORT
+        value: '587' # 587 = STARTTLS (most providers); 465 = implicit TLS
+      - key: SMTP_USER
+        sync: false # SMTP auth username (often the full sender address, or 'apikey' for SendGrid)
+      - key: SMTP_PASS
+        sync: false # SMTP auth password / API key
+      - key: ALERT_FROM
+        sync: false # "from" address — must be a verified sender for your SMTP provider
+      - key: ALERT_TO
+        sync: false # incident-alert recipient (optional; unrelated to password reset)
